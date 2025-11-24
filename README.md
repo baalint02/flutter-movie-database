@@ -1,10 +1,10 @@
 # FilmDatabase
 
-Homework for Flutter course [VIAUAV45](https://github.com/bmeaut/VIAUAV45) at BME.
+Homework for Flutter course [VIAUAV45](https://github.com/bmeaut/VIAUAV45) at Budapest University of Economy and Technology (BME).
 
 ## Used technologies
 
-- REST HTTP fetching from [The Movie Database API](https://developer.themoviedb.org/docs/getting-started) with the [dio](https://pub.dev/packages/dio) package
+- REST HTTP fetching from [The Movie Database API](https://developer.themoviedb.org/docs/getting-started) with the [`dio`](https://pub.dev/packages/dio) package
 - JSON deserialization using the package [`json_serializable`](https://pub.dev/packages/json_serializable)
 - Persistence in SQLite database with the package [`sqflite`](https://pub.dev/packages/sqflite)
 - Dependency Injection with [`provider`](https://pub.dev/packages/provider)
