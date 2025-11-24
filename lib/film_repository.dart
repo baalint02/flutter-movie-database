@@ -1,18 +1,19 @@
+import 'package:film_database/configuration.dart';
 import 'package:film_database/data_model.dart';
 import 'package:film_database/service/tmdb_service.dart';
 
 class FilmRepository {
-  final tmdbService = TMDBService();
+  final _tmdbService = TMDBService(apiKey: Configuration.tmdbApiKey);
 
   Future<List<Film>> searchFilms({required String query}) async {
-    final response = await tmdbService.getSearchResults(query: query);
+    final response = await _tmdbService.getSearchResults(query: query);
     final results = response.results.map((result) {
       final year = result.release_date.isNotEmpty
           ? int.tryParse(result.release_date.split('-')[0])
           : null;
 
       final posterUrl = result.poster_path != null
-          ? tmdbService.getPosterUrlSmall(result.poster_path!)
+          ? _tmdbService.getPosterUrlSmall(result.poster_path!)
           : null;
 
       return Film(
@@ -26,17 +27,17 @@ class FilmRepository {
   }
 
   Future<FilmWithDetails> getFilmDetails({required int id}) async {
-    final response = await tmdbService.getMovieDetails(id: id);
+    final response = await _tmdbService.getMovieDetails(id: id);
     final year = response.release_date != null || response.release_date!.isEmpty
         ? int.tryParse(response.release_date!.split('-')[0])
         : null;
 
     final posterUrl = response.poster_path != null
-        ? tmdbService.getPosterUrlLarge(response.poster_path!)
+        ? _tmdbService.getPosterUrlLarge(response.poster_path!)
         : null;
 
     final backdropUrl = response.backdrop_path != null
-        ? tmdbService.getBackdropUrl(response.poster_path!)
+        ? _tmdbService.getBackdropUrl(response.poster_path!)
         : null;
 
     final genres = response.genres?.map((genre) => genre.name).join(", ");

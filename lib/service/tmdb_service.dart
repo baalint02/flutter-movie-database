@@ -2,17 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:film_database/service/tmdb_models.dart';
 import 'package:flutter/widgets.dart';
 
-const _apiKey = "";
-
 class TMDBService {
   final _dio = Dio();
 
-  TMDBService() {
+  TMDBService({required String apiKey}) {
     _dio.options.baseUrl = "https://api.themoviedb.org/3/";
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          options.headers["Authorization"] = "Bearer $_apiKey";
+          options.headers["Authorization"] = "Bearer $apiKey";
           options.headers["accept"] = "application/json";
           handler.next(options);
         },

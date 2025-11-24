@@ -3,6 +3,7 @@ import 'package:film_database/view/film_list.dart';
 import 'package:film_database/film_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -15,8 +16,6 @@ class _SearchPageState extends State<SearchPage> {
   final FocusNode _focusNode = FocusNode();
 
   String _searchQuery = "";
-
-  final FilmRepository repository = FilmRepository();
 
   @override
   void initState() {
@@ -73,6 +72,8 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildResults(BuildContext context) {
+    final repository = context.read<FilmRepository>();
+
     return FutureBuilder(
       future: repository.searchFilms(query: _searchQuery),
       builder: (context, snapshot) {

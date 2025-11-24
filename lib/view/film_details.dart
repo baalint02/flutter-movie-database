@@ -1,18 +1,18 @@
 import 'package:film_database/data_model.dart';
 import 'package:film_database/film_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class FilmDetailsPage extends StatelessWidget {
   final int filmId;
 
-  FilmDetailsPage({super.key, required this.filmId});
-
-  //todo
-  final FilmRepository repository = FilmRepository();
+  const FilmDetailsPage({super.key, required this.filmId});
 
   @override
   Widget build(BuildContext context) {
+    final repository = context.read<FilmRepository>();
+
     return Scaffold(
       appBar: AppBar(
         actionsPadding: EdgeInsets.symmetric(horizontal: 12),
