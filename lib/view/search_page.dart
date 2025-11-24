@@ -25,6 +25,8 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
     _repository = context.read<FilmRepository>();
 
+    _focusNode.requestFocus();
+
     _focusNode.addListener(() {
       setState(() {});
     });
