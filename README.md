@@ -2,6 +2,12 @@
 
 Homework for Flutter course [VIAUAV45](https://github.com/bmeaut/VIAUAV45) at BME.
 
+## Used technologies
+
+- REST HTTP fetching from [The Movie Database API](https://developer.themoviedb.org/docs/getting-started) with the dio library
+- JSON deserialization using the package `json_serializable`
+- Persistence (TODO)
+
 ## Screenshots
 
 <table>
