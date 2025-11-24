@@ -1,3 +1,4 @@
+import 'package:film_database/data_model.dart';
 import 'package:film_database/view/film_details.dart';
 import 'package:film_database/view/film_list.dart';
 import 'package:film_database/film_repository.dart';
@@ -14,12 +15,15 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final FocusNode _focusNode = FocusNode();
+  late final FilmRepository _repository;
 
   String _searchQuery = "";
+  Future<List<Film>>? _searchResultsFuture;
 
   @override
   void initState() {
     super.initState();
+    _repository = context.read<FilmRepository>();
 
     _focusNode.addListener(() {
       setState(() {});
@@ -56,26 +60,33 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  void _updateSearchResults(String searchQuery) {
+    _searchQuery = searchQuery;
+    if (_searchQuery.length > 2) {
+      _searchResultsFuture = _repository.searchFilms(query: _searchQuery);
+    } else {
+      _searchResultsFuture = null;
+    }
+  }
+
   Widget _buildSearchBar() {
     return SearchBar(
       focusNode: _focusNode,
       hintText: "Search for films",
       leading: Icon(Icons.search),
       padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 16.0)),
-      onChanged: (value) => setState(() => _searchQuery = value),
+      onChanged: (value) => setState(() => _updateSearchResults(value)),
       onSubmitted: (value) => setState(() {
-        _searchQuery = value;
+        _updateSearchResults(value);
         _focusNode.unfocus();
       }),
-      onTapOutside: (event) => _focusNode.unfocus(),
+      onTapOutside: (event) => setState(() => _focusNode.unfocus()),
     );
   }
 
   Widget _buildResults(BuildContext context) {
-    final repository = context.read<FilmRepository>();
-
     return FutureBuilder(
-      future: repository.searchFilms(query: _searchQuery),
+      future: _searchResultsFuture,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final filmList = snapshot.data!;

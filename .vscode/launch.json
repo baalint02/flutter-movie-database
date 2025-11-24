@@ -7,7 +7,10 @@
         {
             "name": "film_database",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "--dart-define=TMDB_API_KEY=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxNjA0YjRiZWIxZDk5NGIwYzZkYWM2YjhlNzhlNWZmYyIsIm5iZiI6MTc2MzgzODcxNS45MjgsInN1YiI6IjY5MjIwYWZiN2YwZDc2ZGNiMDE4NmNiMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.KJ_iJMXSZC3nCkbSMeVLSnfuiUXsfyNQPEnQ0r73Hos"
+            ]
         },
         {
             "name": "film_database (profile mode)",
