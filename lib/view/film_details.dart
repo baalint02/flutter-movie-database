@@ -26,22 +26,16 @@ class _FilmDetailsPageState extends State<FilmDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final repository = context.read<FilmRepository>();
-
     return FutureBuilder(
       future: _filmDetailsFuture,
-      builder: (context, asyncSnapshot) {
+      builder: (context, snapshot) {
         return Scaffold(
           appBar: AppBar(
             actionsPadding: EdgeInsets.symmetric(horizontal: 12),
-            actions: [
-              // FutureBuilder(child),
-              IconButton(onPressed: () => {}, icon: Icon(Icons.library_add)),
-            ],
+            actions: [_buildWatchlistIconButton()],
           ),
-          body: FutureBuilder(
-            future: repository.getFilmDetails(id: widget.filmId),
-            builder: (context, snapshot) {
+          body: Builder(
+            builder: (context) {
               if (snapshot.hasData) {
                 return _FilmDetails(snapshot.data!);
               } else if (snapshot.hasError) {
@@ -55,57 +49,9 @@ class _FilmDetailsPageState extends State<FilmDetailsPage> {
       },
     );
   }
-}
 
-class _WatchListButton extends StatefulWidget {
-  final int filmId;
-
-  const _WatchListButton({required this.filmId});
-
-  @override
-  State<_WatchListButton> createState() => __WatchListButtonState();
-}
-
-class __WatchListButtonState extends State<_WatchListButton> {
-  late final Future<bool> _isInWatchlistFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    final db = context.read<LocalDatabase>();
-    _isInWatchlistFuture = db.isInWatchlist(widget.filmId);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: _isInWatchlistFuture,
-      builder: (context, snapshot) {
-        final isInWatchlist = snapshot.data;
-        if (isInWatchlist == null) {
-          return const IconButton(
-            onPressed: null,
-            icon: Icon(Icons.library_add),
-          );
-        }
-
-        if (isInWatchlist) {
-          return IconButton(
-            onPressed: () {
-              // localDb.removeFromWatchlist(filmId);
-            },
-            icon: Icon(Icons.library_add_check),
-          );
-        }
-
-        return IconButton(
-          onPressed: () {
-            // localDb.removeFromWatchlist(filmId);
-          },
-          icon: Icon(Icons.library_add),
-        );
-      },
-    );
+  Widget _buildWatchlistIconButton() {
+    return IconButton(icon: Icon(Icons.bookmark_outline), onPressed: null);
   }
 }
 
@@ -152,27 +98,25 @@ class _FilmDetails extends StatelessWidget {
               ],
             ),
 
-            // SizedBox(height: 16),
+            SizedBox(height: 16),
 
-            // Text(
-            //   "Francis Ford Coppola",
-            //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
-            //     fontWeight: .bold,
-            //     letterSpacing: 0.0,
-            //   ),
-            // ),
-            // Text("Director, Screenplay"),
+            Text(
+              "Francis Ford Coppola",
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium!.copyWith(letterSpacing: 0.0),
+            ),
+            Text("Director, Screenplay"),
 
-            // SizedBox(height: 16),
+            SizedBox(height: 24),
 
-            // Text(
-            //   "Mario Puzo",
-            //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
-            //     fontWeight: .bold,
-            //     letterSpacing: 0.0,
-            //   ),
-            // ),
-            // Text("Screenplay"),
+            Text(
+              "Mario Puzo",
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium!.copyWith(letterSpacing: 0.0),
+            ),
+            Text("Screenplay"),
           ],
         ),
       ),
