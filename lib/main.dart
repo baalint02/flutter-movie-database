@@ -1,6 +1,7 @@
 import 'package:film_database/film_repository.dart';
 import 'package:film_database/local_db.dart';
 import 'package:film_database/view/search_page.dart';
+import 'package:film_database/view/watchlist_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -11,13 +12,7 @@ void main() {
     MultiProvider(
       providers: [
         Provider(create: (_) => FilmRepository()),
-        Provider(
-          create: (_) {
-            final localDb = LocalDatabase();
-            localDb.open();
-            return localDb;
-          },
-        ),
+        Provider(create: (_) => LocalDatabase()),
       ],
       child: const FilmDatabaseApp(),
     ),
@@ -36,7 +31,7 @@ class _FilmDatabaseAppState extends State<FilmDatabaseApp> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = [const SearchPage(), const Placeholder()];
+    final pages = [const SearchPage(), const WatchlistPage()];
 
     return MaterialApp(
       title: 'FilmDatabase',

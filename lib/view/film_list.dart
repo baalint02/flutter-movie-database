@@ -5,11 +5,13 @@ import 'package:transparent_image/transparent_image.dart';
 class FilmListWidget extends StatelessWidget {
   final List<Film> films;
   final Function(Film) onTapCallback;
+  final EdgeInsetsGeometry? padding;
 
   const FilmListWidget({
     super.key,
     required this.films,
     required this.onTapCallback,
+    this.padding,
   });
 
   @override
@@ -20,7 +22,7 @@ class FilmListWidget extends StatelessWidget {
         itemBuilder: (context, index) =>
             _FilmItemWidget(films[index], onTapCallback),
         separatorBuilder: (context, index) => Divider(height: 0),
-        padding: .only(top: 120),
+        padding: padding,
       );
     } else {
       return const SizedBox();

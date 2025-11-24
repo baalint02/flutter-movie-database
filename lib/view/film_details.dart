@@ -15,43 +15,100 @@ class FilmDetailsPage extends StatefulWidget {
 }
 
 class _FilmDetailsPageState extends State<FilmDetailsPage> {
+  late final LocalDatabase _localDb;
   late final Future<FilmWithDetails> _filmDetailsFuture;
+  late final Future<bool> _initialIsInWatchlistFuture;
+
+  bool? _isInWatchlist;
 
   @override
   void initState() {
     super.initState();
     final repository = context.read<FilmRepository>();
     _filmDetailsFuture = repository.getFilmDetails(id: widget.filmId);
+
+    _localDb = context.read<LocalDatabase>();
+    _initialIsInWatchlistFuture = _localDb.isInWatchlist(widget.filmId);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _filmDetailsFuture,
+      future: Future.wait([_filmDetailsFuture, _initialIsInWatchlistFuture]),
       builder: (context, snapshot) {
-        return Scaffold(
-          appBar: AppBar(
-            actionsPadding: EdgeInsets.symmetric(horizontal: 12),
-            actions: [_buildWatchlistIconButton()],
-          ),
-          body: Builder(
-            builder: (context) {
-              if (snapshot.hasData) {
-                return _FilmDetails(snapshot.data!);
-              } else if (snapshot.hasError) {
-                return Center(child: Text("Error loading film data"));
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
-        );
+        if (snapshot.hasData) {
+          final FilmWithDetails filmData = snapshot.data![0] as FilmWithDetails;
+          final bool initialIsInWatchlist = snapshot.data![1] as bool;
+
+          return Scaffold(
+            appBar: AppBar(
+              actionsPadding: EdgeInsets.symmetric(horizontal: 12),
+              actions: [
+                _buildWatchlistIconButton(
+                  added: _isInWatchlist ?? initialIsInWatchlist,
+                  addOperation: () => _localDb.addToWatchlist(filmData.film),
+                  removeOperation: () =>
+                      _localDb.removeFromWatchlist(widget.filmId),
+                ),
+              ],
+            ),
+            body: _FilmDetails(filmData),
+          );
+        } else if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(),
+            body: Center(child: Text("Error loading film details")),
+          );
+        } else {
+          return Scaffold(
+            appBar: AppBar(),
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
       },
     );
   }
 
-  Widget _buildWatchlistIconButton() {
-    return IconButton(icon: Icon(Icons.bookmark_outline), onPressed: null);
+  Widget _buildWatchlistIconButton({
+    required bool added,
+    required Future<void> Function() addOperation,
+    required Future<void> Function() removeOperation,
+  }) {
+    if (added) {
+      return IconButton(
+        icon: Icon(Icons.bookmark_added),
+        onPressed: () async {
+          await removeOperation();
+          if (!mounted) return;
+          setState(() {
+            _isInWatchlist = false;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Removed from watchlist."),
+                duration: Duration(milliseconds: 1000),
+              ),
+            );
+          });
+        },
+      );
+    } else {
+      return IconButton(
+        icon: Icon(Icons.bookmark_outline),
+        onPressed: () async {
+          await addOperation();
+          if (!mounted) return;
+          setState(() {
+            _isInWatchlist = true;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Added to watchlist."),
+                duration: Duration(milliseconds: 1000),
+              ),
+            );
+          });
+        },
+      );
+    }
   }
 }
 
@@ -98,25 +155,25 @@ class _FilmDetails extends StatelessWidget {
               ],
             ),
 
-            SizedBox(height: 16),
+            // SizedBox(height: 16),
 
-            Text(
-              "Francis Ford Coppola",
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium!.copyWith(letterSpacing: 0.0),
-            ),
-            Text("Director, Screenplay"),
+            // Text(
+            //   "Francis Ford Coppola",
+            //   style: Theme.of(
+            //     context,
+            //   ).textTheme.titleMedium!.copyWith(letterSpacing: 0.0),
+            // ),
+            // Text("Director, Screenplay"),
 
-            SizedBox(height: 24),
+            // SizedBox(height: 24),
 
-            Text(
-              "Mario Puzo",
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium!.copyWith(letterSpacing: 0.0),
-            ),
-            Text("Screenplay"),
+            // Text(
+            //   "Mario Puzo",
+            //   style: Theme.of(
+            //     context,
+            //   ).textTheme.titleMedium!.copyWith(letterSpacing: 0.0),
+            // ),
+            // Text("Screenplay"),
           ],
         ),
       ),

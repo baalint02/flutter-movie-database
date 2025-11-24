@@ -3,11 +3,15 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class LocalDatabase {
-  late Future<Database> _db;
+  late final Future<Database> _db;
 
-  void open() async {
+  LocalDatabase() {
+    _db = _open();
+  }
+
+  Future<Database> _open() async {
     final path = join(await getDatabasesPath(), 'films.db');
-    _db = openDatabase(
+    return openDatabase(
       path,
       onCreate: (db, version) {
         return db.execute(

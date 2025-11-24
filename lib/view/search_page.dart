@@ -96,8 +96,9 @@ class _SearchPageState extends State<SearchPage> {
           return FilmListWidget(
             films: filmList,
             onTapCallback: (film) {
-              openFilmDetailsPage(film.id, context);
+              _openFilmDetailsPage(film.id, context);
             },
+            padding: .only(top: 120),
           );
         } else if (snapshot.hasError) {
           return Center(child: Text("Error"));
@@ -114,7 +115,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  void openFilmDetailsPage(int filmId, BuildContext context) {
+  void _openFilmDetailsPage(int filmId, BuildContext context) {
     Navigator.push(
       context,
       CupertinoPageRoute<void>(
