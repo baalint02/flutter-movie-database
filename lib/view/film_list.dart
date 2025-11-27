@@ -4,7 +4,7 @@ import 'package:transparent_image/transparent_image.dart';
 
 class FilmListWidget extends StatelessWidget {
   final List<Film> films;
-  final Function(Film) onTapCallback;
+  final Function(Film film) onTapCallback;
   final EdgeInsetsGeometry? padding;
 
   const FilmListWidget({
@@ -27,6 +27,63 @@ class FilmListWidget extends StatelessWidget {
     } else {
       return const SizedBox();
     }
+  }
+}
+
+class FilmListDismissibleWidget extends StatelessWidget {
+  final List<Film> films;
+  final Function(Film film) onTapCallback;
+  final Function(int index) onDismissedCallback;
+  final EdgeInsetsGeometry? padding;
+
+  const FilmListDismissibleWidget({
+    super.key,
+    required this.films,
+    required this.onTapCallback,
+    required this.onDismissedCallback,
+    this.padding,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (films.isNotEmpty) {
+      return ListView.separated(
+        itemCount: films.length,
+        itemBuilder: (context, index) => Dismissible(
+          key: Key(films[index].id.toString()),
+          background: const _DismissibleBackground(alignment: .centerLeft),
+          secondaryBackground: const _DismissibleBackground(
+            alignment: .centerRight,
+          ),
+          onDismissed: (_) => onDismissedCallback(index),
+          child: _FilmItemWidget(films[index], onTapCallback),
+        ),
+        separatorBuilder: (context, index) => Divider(height: 0),
+        padding: padding,
+      );
+    } else {
+      return const SizedBox();
+    }
+  }
+}
+
+class _DismissibleBackground extends StatelessWidget {
+  final AlignmentGeometry alignment;
+
+  const _DismissibleBackground({required this.alignment});
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(color: Colors.red),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 36.0),
+        child: Align(
+          alignment: alignment,
+          child: const Icon(Icons.delete_outline),
+        ),
+      ),
+    );
   }
 }
 
