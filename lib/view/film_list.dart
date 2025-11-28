@@ -104,7 +104,6 @@ class _FilmItemWidget extends StatelessWidget {
           crossAxisAlignment: .center,
           children: [
             _buildPoster(),
-
             SizedBox(width: 12),
 
             Expanded(

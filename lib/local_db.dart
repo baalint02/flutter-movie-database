@@ -15,10 +15,10 @@ class LocalDatabase {
       path,
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE watchlist(id INTEGER PRIMARY KEY, title TEXT, year INTEGER, posterUrl TEXT)',
+          'CREATE TABLE watchlist(id INTEGER PRIMARY KEY, title TEXT, year INTEGER, poster_url TEXT, added_timestamp INTEGER)',
         );
       },
-      version: 1,
+      version: 2,
     );
   }
 
@@ -28,7 +28,8 @@ class LocalDatabase {
       'id': film.id,
       'title': film.title,
       'year': film.year,
-      'posterUrl': film.posterUrl,
+      'poster_url': film.posterUrl,
+      'added_timestamp': DateTime.now().millisecondsSinceEpoch,
     };
     db.insert('watchlist', data, conflictAlgorithm: ConflictAlgorithm.replace);
   }
@@ -40,14 +41,17 @@ class LocalDatabase {
 
   Future<List<Film>> getWatchlist() async {
     final db = await _db;
-    final List<Map<String, dynamic>> maps = await db.query('watchlist');
+    final List<Map<String, dynamic>> maps = await db.query(
+      'watchlist',
+      orderBy: 'added_timestamp DESC',
+    );
 
     return List.generate(maps.length, (i) {
       return Film(
         id: maps[i]['id'],
         title: maps[i]['title'],
         year: maps[i]['year'],
-        posterUrl: maps[i]['posterUrl'],
+        posterUrl: maps[i]['poster_url'],
       );
     });
   }
